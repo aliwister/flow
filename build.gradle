@@ -54,5 +54,7 @@ task resolveNflowExplorer(type: Copy) {
   from { tarTree(resources.gzip(configurations.nflowExplorer.singleFile)) }
 }
 
+task stage(dependsOn: ['processResources', 'build', 'clean'])
+build.mustRunAfter clean
 
 processResources.dependsOn resolveNflowExplorer

@@ -17,8 +17,14 @@ hs_err_pid*
 
 .idea
 ### Gradle ###
+build
 .gradle
-/build/
+.idea
+out
+*.iml
+*.ipr
+*.iws
+.DS_Store
 
 # Ignore Gradle GUI config
 gradle-app.setting

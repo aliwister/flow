@@ -1,5 +1,7 @@
 package com.badals.flow;
 
+import io.nflow.engine.service.WorkflowInstanceService;
+import io.nflow.engine.workflow.instance.WorkflowInstanceFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.boot.SpringApplication;
@@ -15,16 +17,20 @@ import io.nflow.rest.v1.jaxrs.WorkflowDefinitionResource;
 import io.nflow.rest.v1.jaxrs.WorkflowExecutorResource;
 import io.nflow.rest.v1.jaxrs.WorkflowInstanceResource;
 
+import javax.inject.Inject;
+
 @SpringBootApplication
 @Import(RestConfiguration.class)
 public class SpringBootFullStackApplication  {
+
 /*
    @Inject
    private WorkflowInstanceService workflowInstances;
 
    @Inject
    private WorkflowInstanceFactory workflowInstanceFactory;
-   */
+*/
+
    @Bean
    public JerseyResourceConfig jerseyResourceConfig() {
       return new JerseyResourceConfig();
