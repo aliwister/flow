@@ -284,29 +284,38 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
 
    public static class ReturnApplication {
       public Long orderId;
-      List<Item> items;
+      public Long productId;
+      public Long sequence;
+      public BigDecimal quantity;
       public boolean replacement = false;
       public boolean toVendor = false;
+      public String  instructions;
+      public String  reason;
+      public String  sku;
+      public String  productName;
       public boolean inventoryReturn = false;
       public boolean onUs = false;
       public int weight = 0;
-      public Double amount;
+      public BigDecimal amount;
 
       public ReturnApplication() {
       }
 
-      public ReturnApplication(Long orderId, List<Item> items, Boolean replacement, Boolean toVendor) {
+      public ReturnApplication(Long orderId, Long sequence, String sku, String productName, Long productId, BigDecimal quantity, boolean replacement, boolean toVendor, String instructions, String reason, boolean onUs) {
          this.orderId = orderId;
-         this.items = items;
+         this.productId = productId;
+         this.sku = sku;
+         this.productName= productName;
+         this.quantity = quantity;
          this.replacement = replacement;
          this.toVendor = toVendor;
+         this.instructions = instructions;
+         this.reason = reason;
+         this.onUs = onUs;
+         this.sequence = sequence;
       }
    }
 
-   public static class Item {
-      Long productId;
-      BigDecimal quantity;
-   }
 
    public static class WorkflowInfo {
       public Long orderId;

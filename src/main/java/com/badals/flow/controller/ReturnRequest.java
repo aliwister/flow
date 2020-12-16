@@ -8,7 +8,9 @@ import java.util.List;
 @Data
 public class ReturnRequest {
    public Long orderId;
-   List<ReturnWorkflow.Item> items;
    public boolean replacement = false;
    public boolean toVendor = false;
+   public boolean onUs = false;
+   public String reason;
+   public String instructions;
 }
