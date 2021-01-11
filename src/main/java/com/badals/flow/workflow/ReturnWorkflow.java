@@ -21,6 +21,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
 
    private static final Logger logger = getLogger(ReturnWorkflow.class);
    private static final String VAR_KEY = "info";
+   private static final String LABEL_KEY = "label";
    public static final String TYPE = "returnWorkflow";
 
    public ReturnWorkflow() {
@@ -208,7 +209,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
    public void toVendor(@SuppressWarnings("unused") StateExecution execution,
                               @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                              @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                              @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.LabelInfo info) {
       logger.info("IRL: external service call for persisting credit application using request data");
 
    }
@@ -292,6 +293,8 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
       public String  instructions;
       public String  reason;
       public String  sku;
+      public Long po;
+      public String ticketUrl;
       public String  productName;
       public boolean inventoryReturn = false;
       public boolean onUs = false;
@@ -301,7 +304,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
       public ReturnApplication() {
       }
 
-      public ReturnApplication(Long orderId, Long sequence, String sku, String productName, Long productId, BigDecimal quantity, boolean replacement, boolean toVendor, String instructions, String reason, boolean onUs) {
+      public ReturnApplication(Long orderId, Long sequence, String sku, String productName, Long productId, BigDecimal quantity, boolean replacement, boolean toVendor, String instructions, String reason, boolean onUs, Long po, String ticketUrl) {
          this.orderId = orderId;
          this.productId = productId;
          this.sku = sku;
@@ -313,11 +316,19 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
          this.reason = reason;
          this.onUs = onUs;
          this.sequence = sequence;
+         this.po = po;
+         this.ticketUrl = ticketUrl;
       }
    }
 
 
    public static class WorkflowInfo {
       public Long orderId;
+   }
+
+   public static class LabelInfo {
+      public String trackingNum;
+      public String shippingCompany;
+      public String labelFile;
    }
 }
