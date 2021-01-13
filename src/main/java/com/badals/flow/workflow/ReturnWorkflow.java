@@ -121,15 +121,13 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
 
    public NextAction createReturn(@SuppressWarnings("unused") StateExecution execution,
-                                  @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                  @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                  @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
       return moveToState(ReturnWorkflow.State.isApprove, "Return application created");
    }
 
    public void isApprove(@SuppressWarnings("unused") StateExecution execution,
-                               @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                               @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                               @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("Waiting to approve");
    }
 
@@ -139,8 +137,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
 
    public NextAction approved(@SuppressWarnings("unused") StateExecution execution,
-                                   @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                   @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                   @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
 
       if(request.replacement)
@@ -150,8 +147,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
 
    public NextAction startReturn(@SuppressWarnings("unused") StateExecution execution,
-                                   @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                   @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                   @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
 
       if (request.toVendor)
@@ -161,8 +157,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
 
    public NextAction replacementApproved(@SuppressWarnings("unused") StateExecution execution,
-                                         @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                         @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                         @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
       return moveToState(State.createReplacementOrder, "Start return no/replacement");
    }
@@ -174,36 +169,31 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
 
    public NextAction replacementRejected(@SuppressWarnings("unused") StateExecution execution,
-                                   @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                   @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                   @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
       return moveToState(State.startReturn, "Start return no/replacement");
    }
 
    public NextAction reject(@SuppressWarnings("unused") StateExecution execution,
-                                  @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                  @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                  @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
       return moveToState(State.finish, "Return application created");
    }
 
    public void toStore(@SuppressWarnings("unused") StateExecution execution,
-                             @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                             @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                             @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
 
    }
 
    public NextAction toStoreReceived(@SuppressWarnings("unused") StateExecution execution,
-                               @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                               @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                               @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("Confirm Receipt in store");
-      return moveToState(State.toVendor, "Return application created");
+      return moveToState(State.generateLabels, "Return application created");
    }
 
    public void generateLabels(@SuppressWarnings("unused") StateExecution execution,
-                              @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                              @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                              @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
 
    }
@@ -216,16 +206,14 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
 
 
    public NextAction toVendorReceived(@SuppressWarnings("unused") StateExecution execution,
-                                      @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                      @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                      @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("Confirm receipt by vendor");
 
       return moveToState(State.startRefundWorkflow, "Return application created");
    }
 
    public NextAction startRefundWorkflow(@SuppressWarnings("unused") StateExecution execution,
-                                         @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                         @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                         @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       RefundData refundData = new RefundData();
       refundData.onUs = request.onUs;
       refundData.amount = request.amount;
@@ -241,45 +229,38 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
 
 
    public void awaitingVendorRefund(@SuppressWarnings("unused") StateExecution execution,
-                                @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
    }
 
    public NextAction vendorRefunded(@SuppressWarnings("unused") StateExecution execution,
-                                      @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                      @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                      @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("Confirm receipt by vendor");
       return moveToState(State.awaitingVendorRefundVerify, "Return application created");
    }
 
    public void awaitingVendorRefundVerify(@SuppressWarnings("unused") StateExecution execution,
-                                      @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                      @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                      @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("Check accounting on receipt by vendor");
    }
    public NextAction vendorRefundVerified(@SuppressWarnings("unused") StateExecution execution,
-                                      @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                      @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                      @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("Confirm receipt by vendor");
       return moveToState(State.finish, "Return application created");
    }
 
 
    public NextAction finish(@SuppressWarnings("unused") StateExecution execution,
-                                             @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                                             @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+                                             @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
       return moveToState(ReturnWorkflow.State.done, "Return application created");
    }
 
 
-   public void done(@SuppressWarnings("unused") StateExecution execution,
-                    @SuppressWarnings("unused") @StateVar(value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+   public void done(@SuppressWarnings("unused") StateExecution execution) {
       logger.info("Credit application process ended");
    }
 
-   public void error(@SuppressWarnings("unused") StateExecution execution,
-                     @SuppressWarnings("unused") @StateVar(value = VAR_KEY) ReturnWorkflow.WorkflowInfo info) {
+   public void error(@SuppressWarnings("unused") StateExecution execution) {
       logger.info("IRL: some UI should poll for workflows that have reached error state");
    }
 
@@ -320,15 +301,27 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
          this.ticketUrl = ticketUrl;
       }
    }
-
-
-   public static class WorkflowInfo {
-      public Long orderId;
-   }
+   
 
    public static class LabelInfo {
       public String trackingNum;
-      public String shippingCompany;
+      public String carrier;
       public String labelFile;
+      public boolean ourLabel;
+      public Double weight;
+      public Double returnFee;
+
+      public LabelInfo() {
+
+      }
+
+      public LabelInfo(String trackingNum, String carrier, String labelFile, boolean ourLabel, Double weight, Double returnFee) {
+         this.trackingNum = trackingNum;
+         this.carrier = carrier;
+         this.labelFile = labelFile;
+         this.ourLabel = ourLabel;
+         this.weight = weight;
+         this.returnFee = returnFee;
+      }
    }
 }
