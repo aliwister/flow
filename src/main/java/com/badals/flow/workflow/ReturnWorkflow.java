@@ -132,6 +132,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
 
    public void isReplacementApprove(@SuppressWarnings("unused") StateExecution execution,
+                                    @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
                                @StateVar(value = "isManual", readOnly = true) boolean manual) {
       logger.info("Waiting to approve");
    }

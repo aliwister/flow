@@ -38,7 +38,7 @@ dependencies {
   runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.10.6'
 
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
-  nflowExplorer group: 'io.nflow', name: 'nflow-explorer', version: '7.0.0', ext: 'tar.gz'
+  nflowExplorer group: 'io.nflow', name: 'nflow-explorer', version: '7.2.2', ext: 'tar.gz'
 
   testCompileOnly 'org.projectlombok:lombok:1.18.16'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
