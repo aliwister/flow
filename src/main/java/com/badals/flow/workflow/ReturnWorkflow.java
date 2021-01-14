@@ -200,7 +200,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
    public void toVendor(@SuppressWarnings("unused") StateExecution execution,
                               @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
-                              @StateVar(instantiateIfNotExists = true, value = VAR_KEY) ReturnWorkflow.LabelInfo info) {
+                              @StateVar(instantiateIfNotExists = true, value = "label") ReturnWorkflow.LabelInfo info) {
       logger.info("IRL: external service call for persisting credit application using request data");
 
    }
@@ -214,15 +214,16 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
 
    public NextAction startRefundWorkflow(@SuppressWarnings("unused") StateExecution execution,
-                                         @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
+                                         @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
+                                         @StateVar(value = "label", readOnly = true) ReturnWorkflow.LabelInfo label) {
       RefundData refundData = new RefundData();
       refundData.onUs = request.onUs;
       refundData.amount = request.amount;
-      refundData.weight = request.weight;
+      refundData.weight = label.weight;
 
       if(!request.replacement)
          execution.addChildWorkflows(
-                 execution.workflowInstanceBuilder().setType(RefundWorkflow.TYPE).setBusinessKey(String.valueOf(request.orderId))
+                 execution.workflowInstanceBuilder().setType(RefundWorkflow.TYPE).setBusinessKey(execution.getBusinessKey())
                          .putStateVariable(RefundWorkflow.VAR_KEY, refundData).build());
 
       return moveToState(State.awaitingVendorRefund, "No customer refund required");
@@ -266,7 +267,6 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    }
 
    public static class ReturnApplication {
-      public Long orderId;
       public Long productId;
       public Long sequence;
       public BigDecimal quantity;
@@ -275,19 +275,18 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
       public String  instructions;
       public String  reason;
       public String  sku;
-      public Long po;
+      public String po;
       public String ticketUrl;
       public String  productName;
       public boolean inventoryReturn = false;
       public boolean onUs = false;
-      public int weight = 0;
       public BigDecimal amount;
 
       public ReturnApplication() {
       }
 
-      public ReturnApplication(Long orderId, Long sequence, String sku, String productName, Long productId, BigDecimal quantity, boolean replacement, boolean toVendor, String instructions, String reason, boolean onUs, Long po, String ticketUrl) {
-         this.orderId = orderId;
+      public ReturnApplication(Long sequence, String sku, String productName, Long productId, BigDecimal quantity, boolean replacement, boolean toVendor, String instructions, String reason, boolean onUs, String po, String ticketUrl) {
+
          this.productId = productId;
          this.sku = sku;
          this.productName= productName;
@@ -309,14 +308,14 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
       public String carrier;
       public String labelFile;
       public boolean ourLabel;
-      public Double weight;
+      public BigDecimal weight;
       public Double returnFee;
 
       public LabelInfo() {
 
       }
 
-      public LabelInfo(String trackingNum, String carrier, String labelFile, boolean ourLabel, Double weight, Double returnFee) {
+      public LabelInfo(String trackingNum, String carrier, String labelFile, boolean ourLabel, BigDecimal weight, Double returnFee) {
          this.trackingNum = trackingNum;
          this.carrier = carrier;
          this.labelFile = labelFile;

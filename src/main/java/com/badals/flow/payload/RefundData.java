@@ -5,5 +5,5 @@ import java.math.BigDecimal;
 public class RefundData {
    public boolean onUs;
    public BigDecimal amount;
-   public int weight;
+   public BigDecimal weight;
 }
