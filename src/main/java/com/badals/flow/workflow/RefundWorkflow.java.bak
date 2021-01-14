@@ -16,7 +16,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class RefundWorkflow extends WorkflowDefinition<RefundWorkflow.State> {
 
    private static final Logger logger = getLogger(RefundWorkflow.class);
-   public static final String VAR_KEY = "requestData";
+   public static final String VAR_KEY = "refundData";
    public static final String TYPE = "refundWorkflow";
 
    public RefundWorkflow() {
@@ -62,11 +62,11 @@ public class RefundWorkflow extends WorkflowDefinition<RefundWorkflow.State> {
    }
 
    public void refundCustomer(@SuppressWarnings("unused") StateExecution execution,
-                              @StateVar(value = VAR_KEY, readOnly = true) RefundWorkflow.RefundApplication request) {
+                              @StateVar(value = "requestData", readOnly = true) RefundWorkflow.RefundApplication request) {
       logger.info("Issue a refund to customer");
    }
    public NextAction customerRefunded(@SuppressWarnings("unused") StateExecution execution,
-                                      @StateVar(value = VAR_KEY, readOnly = true) RefundWorkflow.RefundApplication request) {
+                                      @StateVar(value = "requestData", readOnly = true) RefundWorkflow.RefundApplication request) {
       logger.info("Confirm receipt by vendor");
       return moveToState(State.done, "Return application created");
    }
