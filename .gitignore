@@ -1,5 +1,6 @@
 ### Java ###
 *.class
+*.java.bak
 
 # BlueJ files
 *.ctxt
