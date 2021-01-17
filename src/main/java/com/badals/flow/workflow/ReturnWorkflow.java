@@ -34,6 +34,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
       permit(State.reject, State.finish);
       permit(State.approved, State.startReturn);
 
+
       permit(State.approved, State.isReplacementApprove);
 
       permit(State.isReplacementApprove, State.replacementApproved);
@@ -46,8 +47,19 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
       permit(State.createReplacementOrder, State.startReturn);
       permit(State.replacementRejected, State.startReturn);
 
-      permit(State.startReturn, State.toStore);
-      permit(State.startReturn, State.generateLabels);
+
+      permit(State.startReturn, State.reviewReturn);
+      permit(State.reviewReturn, State.proceed);
+      permit(State.reviewReturn, State.gift);
+      permit(State.reviewReturn, State.stock);
+      permit(State.reviewReturn, State.discard);
+
+      permit(State.gift, State.finish);
+      permit(State.stock, State.finish);
+      permit(State.discard, State.finish);
+
+      permit(State.proceed, State.toStore);
+      permit(State.proceed, State.generateLabels);
 
       permit(State.toStore, State.toStoreReceived);
 
@@ -72,6 +84,11 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
 
    public enum State implements io.nflow.engine.workflow.definition.WorkflowState {
       createReturn(start, "Return application is persisted to database"),
+/*      makeOffer(manual, "Make an offer to customer to avoid return"),
+      discountOffer(normal,"Discount in comments to be added"),
+      couponOffer(normal,"To send coupon to customer"),
+      persuadeOffer(normal,"Customer persuaded to keep it"),
+      */
       isApprove(manual, "Manual return approval is made"),
 
       approved(normal, "Manual return approval is made"),
@@ -85,6 +102,12 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
       reject(normal, "Manual return reject is made"),
 
       startReturn(normal, "Start item return"),
+      reviewReturn(manual, "Review whether to return"),
+      proceed(normal, "Start item return"),
+      gift(manual, "Start item return"),
+      stock(manual, "Start item return"),
+      discard(manual, "Start item return"),
+
       toStore(manual, "Return is expected in Store"),
       toStoreReceived(normal, "Return is received in Store"),
       generateLabels(manual, "Return being sent to Vendor"),
@@ -123,13 +146,25 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    public NextAction createReturn(@SuppressWarnings("unused") StateExecution execution,
                                   @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
-      return moveToState(ReturnWorkflow.State.isApprove, "Return application created");
+      return moveToState(State.isApprove, "Return application created");
    }
+
+/*   public void makeOffer(@SuppressWarnings("unused") StateExecution execution,
+                                 @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
+      logger.info("IRL: external service call for persisting credit application using request data");
+
+      if (request.toVendor)
+         return moveToState(State.generateLabels, "Returning directly to vendor");
+      else
+         return moveToState(State.toStore, "Returning via store");
+   }*/
 
    public void isApprove(@SuppressWarnings("unused") StateExecution execution,
                                @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("Waiting to approve");
    }
+
+
 
    public void isReplacementApprove(@SuppressWarnings("unused") StateExecution execution,
                                     @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request,
@@ -150,12 +185,39 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
    public NextAction startReturn(@SuppressWarnings("unused") StateExecution execution,
                                    @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       logger.info("IRL: external service call for persisting credit application using request data");
+      return moveToState(State.reviewReturn, "Returning directly to vendor");
+   }
 
+   public void reviewReturn(@SuppressWarnings("unused") StateExecution execution,
+                            @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
+      logger.info("IRL: external service call for persisting credit application using request data");
+   }
+
+
+   public NextAction proceed(@SuppressWarnings("unused") StateExecution execution,
+                                 @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
       if (request.toVendor)
          return moveToState(State.generateLabels, "Returning directly to vendor");
       else
          return moveToState(State.toStore, "Returning via store");
    }
+
+
+
+
+   public void gift(@SuppressWarnings("unused") StateExecution execution,
+                                 @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
+      logger.info("IRL: external service call for persisting credit application using request data");
+   }
+   public void stock(@SuppressWarnings("unused") StateExecution execution,
+                                 @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
+      logger.info("IRL: external service call for persisting credit application using request data");
+   }
+   public void discard(@SuppressWarnings("unused") StateExecution execution,
+                                 @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
+      logger.info("IRL: external service call for persisting credit application using request data");
+   }
+
 
    public NextAction replacementApproved(@SuppressWarnings("unused") StateExecution execution,
                                          @StateVar(value = "requestData", readOnly = true) ReturnWorkflow.ReturnApplication request) {
@@ -301,7 +363,7 @@ public class ReturnWorkflow extends WorkflowDefinition<ReturnWorkflow.State> {
          this.ticketUrl = ticketUrl;
       }
    }
-
+   
 
    public static class LabelInfo {
       public String trackingNum;
